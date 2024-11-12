@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('rajkumar121:Rajkumar2005') // Docker Hub credentials ID
+        DOCKERHUB_CREDENTIALS = credentials('rajkumar121') // Docker Hub credentials ID
         DOCKER_IMAGE = 'rajkumar121/my-java-project:latest' // Docker image name to push
         KUBECONFIG_CREDENTIALS = credentials('kubeconfig-credentials-id') // Kubernetes config credentials ID
     }
