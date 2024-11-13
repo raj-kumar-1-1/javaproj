@@ -19,8 +19,9 @@ pipeline {
         stage('Debug') {
     steps {
         script {
-            echo "DOCKER_USERNAME: ${env.DOCKER_USERNAME}"
-            echo "DOCKER_PASSWORD: ${env.DOCKER_PASSWORD}"
+         echo "DOCKER_USERNAME: $rajkumar121"
+echo "DOCKER_PASSWORD: $22h51a05j2"
+
         }
     }
 }
