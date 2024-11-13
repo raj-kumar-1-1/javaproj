@@ -17,20 +17,15 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
+           stage('Push') {
             steps {
                 script {
-                    // Use credentials to authenticate with Docker Hub
-                   withCredentials([usernamePassword(credentialsId: 'rajkumar121', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-    bat """
-        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
-        docker push rajkumar121/my-java-project:latest
-    """
-}
-
-                    }
+                    // Directly using username and password in the command
+                    bat 'echo 22h51a05j2  | docker login -u rajkumar121 --password-stdin'
+                    bat 'docker push rajkumar121/my-java-project:latest'
                 }
             }
+        }
         
 
         stage('Test') {
