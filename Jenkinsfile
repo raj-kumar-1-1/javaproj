@@ -20,7 +20,7 @@ pipeline {
     steps {
         script {
          echo "DOCKER_USERNAME: $rajkumar121"
-echo "DOCKER_PASSWORD: $22h51a05j2"
+         echo "DOCKER_PASSWORD: $22h51a05j2"
 
         }
     }
