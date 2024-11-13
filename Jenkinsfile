@@ -17,11 +17,13 @@ pipeline {
             }
         }
 
-           stage('Push') {
+        stage('Push') {
             steps {
                 script {
-                    // Directly using username and password in the command
-                    bat 'echo 22h51a05j2  | docker login -u rajkumar121 --password-stdin'
+                    // Use credentials securely
+                    withCredentials([usernamePassword(credentialsId: 'rajkumar121', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat "echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin"
+                    }
                     bat 'docker push rajkumar121/my-java-project:latest'
                 }
             }
