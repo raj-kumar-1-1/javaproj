@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-java-project
+spec:
+  replicas: 1  # Adjust based on your needs
+  selector:
+    matchLabels:
+      app: my-java-project
+  template:
+    metadata:
+      labels:
+        app: my-java-project
+    spec:
+      containers:
+        - name: my-java-project
+          image: rajkumar121/my-java-project:latest  # Replace with your Docker Hub image
+          ports:
+            - containerPort: 8080  # Change this if your app listens on a different port
+          imagePullPolicy: Always  # Ensures the latest image is pulled from Docker Hub
