@@ -2,42 +2,74 @@ pipeline {
     agent any
 
     environment {
-        // Do not directly use credentials in environment block
-        // DOCKER_USERNAME = credentials('rajkumar121').username
-        // DOCKER_PASSWORD = credentials('rajkumar121').password
+        DOCKER_USERNAME = credentials('rajkumar121').username
+        DOCKER_PASSWORD = credentials('rajkumar121').password
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                echo "Checking out the code from GitHub"
+                // Checkout the code from your Git repository
+                git 'https://github.com/raj-kumar-1-1/javaproj.git'
+            }
+        }
+
         stage('Build') {
             steps {
+                echo "Building the project"
+                // Add your build steps here (e.g., Maven, Gradle, etc.)
+                // For example, a simple Maven build could look like:
+                // sh 'mvn clean install'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
                 script {
-                    // Use 'withCredentials' to inject the credentials into the pipeline
+                    echo "Logging in to Docker Hub"
                     withCredentials([usernamePassword(credentialsId: 'rajkumar121', 
                                                        usernameVariable: 'DOCKER_USERNAME', 
                                                        passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Now you can use DOCKER_USERNAME and DOCKER_PASSWORD
-                        echo "Docker username: ${env.DOCKER_USERNAME}"
-                        echo "Docker password: ${env.DOCKER_PASSWORD}"
-
-                        // For example, logging into Docker
                         sh """
-                        echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME}
+                        echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
                         """
                     }
                 }
             }
         }
-    }
 
-        stage('Push to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
+                echo "Building Docker image"
                 script {
-                    // Use withCredentials for logging into Docker Hub
-                    withCredentials([usernamePassword(credentialsId: 'rajkumar121', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} "
-                    }
-                    bat 'docker push rajkumar121/my-java-project:latest'
+                    // Build the Docker image
+                    sh 'docker build -t myapp .'
+                }
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                echo "Pushing Docker image to Docker Hub"
+                script {
+                    // Push the Docker image to Docker Hub
+                    sh 'docker push myapp'
                 }
             }
         }
     }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+        always {
+            echo 'Cleaning up!'
+            // Any cleanup steps you may want to run
+        }
+    }
+}
