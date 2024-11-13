@@ -1,80 +1,36 @@
 pipeline {
-    agent any
-
-    environment {
-        DOCKER_USERNAME = ''
-        DOCKER_PASSWORD = ''
-    }
+    agent any 
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo "Checking out the code from GitHub"
-                // Checkout the code from your Git repository
-                git 'https://github.com/raj-kumar-1-1/javaproj.git'
-            }
-        }
-
         stage('Build') {
-           
-    steps {
-        script {
-            // Use a Windows-friendly method to build the Docker image
-            bat 'docker build -t rajkumar121/my-java-project:latest .'
-        }
-    }
-}
-
-           
-
-        stage('Login to Docker Hub') {
             steps {
                 script {
-                    echo "Logging in to Docker Hub"
-                    withCredentials([usernamePassword(credentialsId: 'rajkumar121', 
-                                                       usernameVariable: 'DOCKER_USERNAME', 
-                                                       passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Set the environment variables using the credentials
-                        echo "Logging into Docker Hub with credentials"
-                        sh """
-                        echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
-                        """
-                    }
+                    bat 'docker build -t my-java-project .'
+                     bat 'docker tag my-java-project rajkumar121/my-java-project:latest'
+                      bat 'docker push rajkumar121/my-java-project:latest'
                 }
             }
         }
-
-        stage('Build Docker Image') {
+        stage('Test') {
             steps {
-                echo "Building Docker image"
                 script {
-                    // Build the Docker image
-                    sh 'docker build -t myapp .'
+                    // Run tests here if you have any
+                    echo 'Running tests...'
                 }
             }
         }
-
-        stage('Push Docker Image to Docker Hub') {
+        stage('Deploy') {
             steps {
-                echo "Pushing Docker image to Docker Hub"
                 script {
-                    // Push the Docker image to Docker Hub
-                    sh 'docker push myapp'
+                   //  Deploy your Docker image
+                   bat 'minikube start'
+                    bat 'kubectl apply -f deployment.yaml'
+                   bat 'kubectl apply -f service.yaml'
+                    bat 'minikube dashboard'
+                    bat 'kubectl get services'
+                    echo 'Deploying application...'
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
-        }
-        always {
-            echo 'Cleaning up!'
-            // Any cleanup steps you may want to run
         }
     }
 }
