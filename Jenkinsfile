@@ -1,44 +1,53 @@
 pipeline {
     agent any
+
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('rajkumar121') // Docker Hub credentials ID
-        DOCKER_IMAGE = 'rajkumar121/my-java-project:latest' // Docker image name to push
-        KUBECONFIG_CREDENTIALS = credentials('kubeconfig-credentials-id') // Kubernetes config credentials ID
+        // Define Docker image details
+        DOCKER_IMAGE = 'rajkumar121/my-java-project'
     }
-    
+
     stages {
-        stage('Clone Repository') {
-            steps {
-                git credentialsId: 'github-credentials-id', url: 'https://github.com/raj-kumar-1-1/javaproj' // Replace with your GitHub repository URL and credentials ID
-            }
-        }
-        
-        stage('Build Docker Image') {
+        stage('Build') {
             steps {
                 script {
-                    // Build Docker image
-                    docker.build(DOCKER_IMAGE)
-                }
-            }
-        }
-        
-        stage('Push Docker Image to Docker Hub') {
-            steps {
-                script {
+                    // Build Docker image locally
+                    bat 'docker build -t my-java-project:latest .'
+                    
+                    // Tag Docker image for Docker Hub
+                    // bat "docker tag w9-csedd:latest ${DOCKER_IMAGE}:latest"
+                    
                     // Push Docker image to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        docker.image(DOCKER_IMAGE).push('latest')
-                    }
+                    bat "docker push rajkumar121/my-java-project:latest"
                 }
             }
         }
-        
-        stage('Deploy to Kubernetes') {
+        stage('Test') {
             steps {
-                withKubeConfig([credentialsId: KUBECONFIG_CREDENTIALS]) {
-                    // Apply the Kubernetes configuration files (deployment and service)
-                    sh 'kubectl apply -f k8s/deployment.yaml'
-                    sh 'kubectl apply -f k8s/service.yaml'
+                script {
+                    // Placeholder for any tests you want to run (optional)
+                    echo 'Running tests...'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    // Start Minikube if not already started
+                    bat 'minikube start'
+
+                    // Apply Kubernetes Deployment configuration
+                    bat 'kubectl apply -f deployment.yaml'
+                    
+                    // Apply Kubernetes Service configuration
+                    bat 'kubectl apply -f service.yaml'
+
+                    // Open Minikube dashboard
+                    bat 'minikube dashboard'
+
+                    // Check the status of services
+                    bat 'kubectl get services'
+                    
+                    echo 'Deploying application...'
                 }
             }
         }
