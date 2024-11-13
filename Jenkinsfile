@@ -19,8 +19,11 @@ pipeline {
         stage('Debug') {
     steps {
         script {
-         echo "DOCKER_USERNAME: $rajkumar121"
-         echo "DOCKER_PASSWORD: $22h51a05j2"
+            def dockerUsername= "rajkumar121"
+         echo "DOCKER_USERNAME: ${dockerUsername}"
+          def dockerPassword = "22h51a05j2"
+          echo "DOCKER_PASSWORD: ${dockerPassword}"
+
 
         }
     }
