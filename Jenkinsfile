@@ -21,7 +21,7 @@ pipeline {
             steps {
                 script {
                     // Use credentials to authenticate with Docker Hub
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'rajkumar121', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         bat """
                             echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
                             docker push rajkumar121/my-java-project:latest
