@@ -16,6 +16,15 @@ pipeline {
                 }
             }
         }
+        stage('Debug') {
+    steps {
+        script {
+            echo "DOCKER_USERNAME: ${env.DOCKER_USERNAME}"
+            echo "DOCKER_PASSWORD: ${env.DOCKER_PASSWORD}"
+        }
+    }
+}
+
 
         stage('Push') {
             steps {
