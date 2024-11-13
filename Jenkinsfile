@@ -1,67 +1,32 @@
 pipeline {
-    agent any 
-
+    agent any
+    environment {
+        DOCKER_USERNAME = credentials('rajkumar121').username
+        DOCKER_PASSWORD = credentials('rajkumar121').password
+    }
     stages {
         stage('Checkout SCM') {
             steps {
                 checkout scm
             }
         }
-
         stage('Build') {
             steps {
                 script {
+                    // Building the Docker image
                     bat 'docker build -t my-java-project:latest .'
                     bat 'docker tag my-java-project:latest rajkumar121/my-java-project:latest'
                 }
             }
         }
-        stage('Debug') {
-    steps {
-        script {
-            def dockerUsername= "rajkumar121"
-         echo "DOCKER_USERNAME: ${dockerUsername}"
-          def dockerPassword = "22h51a05j2"
-          echo "DOCKER_PASSWORD: ${dockerPassword}"
-
-
-        }
-    }
-}
-
-
-        stage('Push') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Use credentials securely
+                    // Use withCredentials for logging into Docker Hub
                     withCredentials([usernamePassword(credentialsId: 'rajkumar121', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat "echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin"
+                        bat "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} "
                     }
                     bat 'docker push rajkumar121/my-java-project:latest'
-                }
-            }
-        }
-        
-
-        stage('Test') {
-            steps {
-                script {
-                    // Run tests here if you have any
-                    echo 'Running tests...'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploy your Docker image
-                    bat 'minikube start'
-                    bat 'kubectl apply -f deployment.yaml'
-                    bat 'kubectl apply -f service.yaml'
-                    bat 'minikube dashboard'
-                    bat 'kubectl get services'
-                    echo 'Deploying application...'
                 }
             }
         }
