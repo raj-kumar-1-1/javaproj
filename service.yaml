@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-java-project
+spec:
+  selector:
+    app: my-java-project # This should match the label in your deployment.yaml
+  ports:
+    - protocol: TCP
+      port: 80  # Port exposed by the service (can be accessed from outside the cluster)
+      targetPort: 8080  # Port inside the container (should match your app's listening port)
+  type: NodePort  # This exposes the service on a port on each node
