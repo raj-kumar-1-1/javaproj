@@ -16,11 +16,15 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                echo "Building the project"
-                // Add your build steps here (e.g., Maven, Gradle, etc.)
-                // For example, a simple Maven build could look like:
-                // sh 'mvn clean install'
+           
+    steps {
+        script {
+            // Use a Windows-friendly method to build the Docker image
+            bat 'docker build -t rajkumar121/my-java-project:latest .'
+        }
+    }
+}
+
             }
         }
 
