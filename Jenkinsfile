@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USERNAME = credentials('rajkumar121').username
-        DOCKER_PASSWORD = credentials('rajkumar121').password
+        DOCKER_USERNAME = ''
+        DOCKER_PASSWORD = ''
     }
 
     stages {
@@ -31,6 +31,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'rajkumar121', 
                                                        usernameVariable: 'DOCKER_USERNAME', 
                                                        passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Set the environment variables using the credentials
+                        echo "Logging into Docker Hub with credentials"
                         sh """
                         echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin
                         """
